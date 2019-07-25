@@ -1,0 +1,4 @@
+sys 'writeln'
+var #0, 'teste'
+put #0
+sys 'writeln'
