@@ -1,4 +1,4 @@
-unit tests; {$mode objfpc}
+unit test; {$mode objfpc}
 
 interface
 

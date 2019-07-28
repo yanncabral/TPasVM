@@ -1,5 +1,5 @@
 {$mode objfpc}
-uses pasvm, tests, sysutils, strutils, types, crt;
+uses pasvm, test, sysutils, strutils, types, crt;
 
 type
     TByteArray = array of byte;
@@ -26,7 +26,7 @@ var
     Interpreter: TPasVMInterpreter;
 
 begin
-    interpreter.Vm.Create([]);
+    Interpreter.VM.Create([]);
     ClrScr;
     WriteLn('Welcome to PasVM!');
     with Interpreter do begin
@@ -34,13 +34,13 @@ begin
             write('>>> ');
             readLn(input);
             case input of
-                '.registers': vm.printRegisters;
-                '.program': vm.printCode;
+                '.registers': VM.printRegisters;
+                '.program': VM.printCode;
                 '.quit': system.halt(0);
                 '0'..'F': 
                 begin
-                    Vm.addCode(getByteArray(input));
-                    vm.Run();
+                    VM.addCode(getByteArray(input));
+                    VM.Run();
                 end;
             else
                 WriteLn('Invalid input');    

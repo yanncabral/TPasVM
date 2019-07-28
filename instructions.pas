@@ -9,7 +9,8 @@ type
       tkIllegal, 
       tkXor = $20, tkAdd, tkSub, tkMul, tkDiv, tkInc, tkDec, tkAnd, tkOr,
       tkEqual = $40, tkGreater, tkLess, tkGreaterEqual, tkLessEqual,
-      tkPush = $70, tkPop, tkRet, tkCall
+      tkPush = $70, tkPop, tkRet, tkCall,
+      tkMem, tkFree
     );
     TInstruction = object 
         op: TOpcode;

@@ -7,6 +7,7 @@ uses instructions, stack;
 type TByteArray = array of byte;
 type TPasVM = object // TODO: Object
   Registers: array[0..31] of integer;
+  Heap: TByteArray;
   Stack: TStack;
   Pos: longint;
   Code: TByteArray; 
@@ -62,6 +63,7 @@ var
   i: longint;
 begin
   //Initialize all registers;
+  Heap := [];
   for i := 0 to Pred(Length(Registers)) do
     Registers[i] := 0;
   Pos := 0;
@@ -109,24 +111,31 @@ begin
   if Pos < len then
     case nextOpcode of
       tkExit: begin WriteLn('Exit bytecode encountered!'); exit(false); end;
+      tkStore: Registers[advance] := doubleAdvance; 
+      tkPrint: writeLn(Registers[Advance]);
+      tkRandom: Registers[Advance] := Random(Registers[Advance]);      
+      tkJumpTo: Pos := Registers[advance];      
+      tkIllegal: exit(false);
+      tkIfJump: Pos := ifThen(ifFlag, Registers[advance], pos);
+      tkIfNotJump: Pos := ifThen(not ifFlag, Registers[advance], pos);
+      tkJump: Pos += Registers[advance];      
+      tkXor: Registers[Advance] := Registers[Advance] xor Registers[Advance];      
+      tkAdd: Registers[Advance] := Registers[Advance] + Registers[Advance];
+      tkSub: Registers[Advance] := Registers[Advance] - Registers[Advance];
+      tkMul: Registers[Advance] := Registers[Advance] * Registers[Advance];
+      tkDiv: Registers[Advance] := DivideOp(Registers[Advance],Registers[Advance], rest);      
+      tkInc: Registers[Advance] += Registers[Advance];
+      tkDec: Registers[Advance] -= Registers[Advance];   
+      tkAnd: Registers[Advance] := Registers[Advance] and Registers[Advance];      
+      tkOr: Registers[Advance] := Registers[Advance] or Registers[Advance];               
       tkEqual: ifFlag := Registers[Advance] = Registers[Advance];
       tkGreater: ifFlag := Registers[Advance] > Registers[Advance];
       tkLess: ifFlag := Registers[Advance] < Registers[Advance];
       tkGreaterEqual: ifFlag := Registers[Advance] >= Registers[Advance];
       tkLessEqual: ifFlag := Registers[Advance] >= Registers[Advance];      
-      tkAdd: Registers[Advance] := Registers[Advance] + Registers[Advance];
-      tkSub: Registers[Advance] := Registers[Advance] - Registers[Advance];
-      tkMul: Registers[Advance] := Registers[Advance] * Registers[Advance];
-      tkDiv: Registers[Advance] := DivideOp(Registers[Advance],Registers[Advance], rest);
-      tkJumpTo: Pos := Registers[advance];
-      tkJump: Pos += Registers[advance];
-      tkIllegal: exit(false);
-      tkStore: Registers[advance] := doubleAdvance; 
-      tkIfJump: Pos := ifThen(ifFlag, Registers[advance], pos);
-      tkIfNotJump: Pos := ifThen(not ifFlag, Registers[advance], pos);
-      tkPrint: writeLn(Registers[Advance]);
       tkPush: Stack.Push(Registers[Advance]);
       tkPop: Registers[Advance] := Stack.Pop;
+      tkMem: SetLength(Heap, Length(Heap) + Registers[Advance]);      
       else begin
         writeLn('Unrecognized opcode found! Terminating!');
         exit(false);
